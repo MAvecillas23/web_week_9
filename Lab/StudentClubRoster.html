@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Club Membership</title>
+
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+
+    <style>
+
+        .selected {
+            text-decoration: line-through ;
+            font-style: italic;
+            color: gray;
+        }
+
+        input {
+            width: 100%;
+            padding: 5px;
+            margin: 5px 5px 5px 0px;
+            box-sizing: border-box;
+        }
+
+    </style>
+
+</head>
+<body>
+
+<div id="app">
+    <h1>Student Club Roster</h1>
+
+    <h2>Add Students</h2>
+
+    <label for="student-name">Student Name</label>
+    <!-- Use v-model to connect this input to a ref called newStudentName -->
+    <input v-model="newStudentName" id="student-name" name="student-name">
+
+    <br>
+
+    <label for="student-id">Student ID</label>
+    <!-- Use v-model to connect this input to a ref called newStudentId -->
+    <input v-model="newStudentId" id="student-id" name="student-id">
+
+    <br>
+
+    <label for="student-gpa">Student GPA</label>
+    <!-- Use v-model to connect this input to a ref called newStudentGpa -->
+    <input v-model="newStudentGpa" id="student-gpa" name="student-gpa" type="number">
+
+    <br>
+
+    <!-- Use v-on to call addNewStudent function. Complete the addNewStudent function in the script. -->
+    <button v-on:click="addNewStudent" id="add-student">Add Student</button>
+
+    <h2>Student List</h2>
+
+    <p>There is/are
+        <span id="student-count">
+        <!-- Create a computed property called studentCount and use it to display the student count here -->
+        </span>
+        {{studentCount}} student(s) in the club.</p>
+
+
+    <ul id="student-list">
+        <!-- use v-for to create li elements, one for each student -->
+        <li v-for="student in studentList" v-on:click="selectOrUnselectStudent(student)" v-bind:class="{ selected: student.selected }">
+            <!-- Modify this to display the student's data more neatly - display their name, ID and GPA. -->
+            <!-- for example "Beyonce Knowles, id: aa1234bb, GPA 3.8" -->
+            {{ student.name }}, id: {{ student.id}}, GPA: {{ student.gpa }}
+        </li>
+    </ul>
+
+    <!-- Add a v-on to call removeSelectedStudents -->
+    <button v-on:click="removeSelectedStudents" id="remove-selected-students">Remove selected students</button>
+
+</div>  <!-- end of div#app -->
+
+<script>
+
+    /* This app will store a list of student objects. Each student object should have this structure,
+
+    {name: 'Beyonce Knowles', id: 'aa1234bb', gpa: 3.8, selected: false}
+
+    Add the following functionality to this page
+
+        * Display the number of students in the student-count span. Keep this value up to date as students are added and removed, using a computed property.
+
+        * When the add student button is clicked
+            - Read the value from the student-name input, save in a variable. If the name is not entered, show an alert error message and return. (1pt)
+            - Read the value from the student-id input, save in a variable. If the id is not entered, show an alert error message and return. (1pt)
+            - Read the value from the student-gpa input, save in a variable. If the GPA is not entered, or is not in the range 0-4, show an alert error message and return.  (1pt)
+
+        * An event handler that toggles the selected value for a student object is provided for you.
+        * Each li element will use the appropriate class based on whether a student is selected or not.
+
+        * When the Remove selected students is clicked, remove all selected students.
+
+    */
+
+
+    const { createApp, ref, computed } = Vue
+
+    createApp({
+        setup() {
+
+
+            // Create a new ref studentList. This will be an array. The array can be empty, or you can create an example student or students if you like.
+            const studentList = ref([]) // this list holds students that were added to club roster
+            // Create a new ref newStudentName, initially an empty string
+            const newStudentName = ref('') // this will hold student name from input
+
+            // Create a new ref newStudentId, initially an empty string
+            const newStudentId = ref('') // holds student id from input
+            // Create a new ref newStudentGpa, initially an empty string
+            const newStudentGpa = ref('') // holds gpa from input
+
+            // Use this for form validation
+            const errors = ref([])  // if users don't enter anything or if gpa is not valid gpa
+            // errors telling user will be held here
+
+            // Create a computed property studentCount. This will set the value to the length of the student list.
+            // studentCount is updated and displayed everytime a new student is added to student roster
+            const studentCount = computed( () => {
+                return studentList.value.length
+            })
+
+            // function that adds student to student roster
+            const addNewStudent = () => {
+                // Set the errors value to an empty array
+                errors.value = []
+
+                // Read the value from newStudentName. If it is empty, add an error message to the end of the errors ref.
+                // Read the value from newStudentId. If it is empty, add an error message to the end of the errors ref.
+                // Read the value from newStudentGPA. If it is empty, add an error message to the end of the errors ref.
+
+                // Form validation if user doesn't enter anything in the input... those errors are added to the errors list
+                if (newStudentName.value.length === 0) {
+                    errors.value.push('* Student name must be entered')
+                }
+                if (newStudentId.value.length === 0) {
+                    errors.value.push('* Student ID must be entered')
+                }
+                if (newStudentGpa.value.length === 0) {
+                    errors.value.push('* Student GPA must be entered')
+                }
+                //  And, check that newStudentGPA is between 0 and 4. If not, add an error message to the end of the errors ref.
+                // if gpa is not valid add error to errors list
+                if (newStudentGpa.value < 0 || newStudentGpa.value > 4) {
+                    errors.value.push('* Student GPA must be between 0 and 4')
+                }
+                // Check the length of errors. If it is more than 0, show an alert with the error message(s)
+                // if there are errors in the errors list, display them to the user
+                if (errors.value.length > 0) {
+                    alert(errors.value.join('\n'))
+                } else {
+
+                    // read value of inputs and assign them to variables
+                    const name = newStudentName.value
+                    const id = newStudentId.value
+                    const gpa = newStudentGpa.value
+
+                    // Create a new student object with properties name, id, gpa, selected.
+                    // Set name to newStudentName's value
+                    // Set id to newStudentId's value
+                    // Set gpa to newStudentGpa's value
+                    // Set selected to false
+
+                    // create new student object
+                    const studentObject = {name: name, id: id, gpa: gpa, selected: false}
+
+                    // Add this new object to the end of studentList
+                    //add student object to student list
+                    studentList.value.push(studentObject)
+
+                    // Set the value of newStudentName, newStudentId, newStudentGpa to empty strings, to clear the form
+                    newStudentName.value = ''
+                    newStudentId.value = ''
+                    newStudentGpa.value = ''
+                }
+                }
+
+                // removes students who are selected in the roster from student list
+            const removeSelectedStudents = () => {
+                // Remove all students with selected = true from the studentList. You can do this with filter,
+                // or you can make a new empty array, loop over the studentList, and copy all selected = false students
+                // to the new list, then replace the value of studentList with the new array
+
+                studentList.value = studentList.value.filter((student) => student.selected === false)
+
+            }
+
+            const selectOrUnselectStudent = (student) => {
+                // This function is completed for you. If the selected property is true, it is changed to false.
+                // if the selected property is false, it is changed to true.
+                student.selected = !student.selected
+            }
+
+            // returns to div app
+            return {
+                // List all the refs and functions and computed properties
+                newStudentName,
+                newStudentId,
+                newStudentGpa,
+                studentList,
+                addNewStudent,
+                errors,
+                removeSelectedStudents,
+                studentCount,
+                selectOrUnselectStudent
+
+
+            }
+        }
+    }).mount('#app')
+
+
+</script>
+
+</body>
+</html>

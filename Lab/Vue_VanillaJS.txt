@@ -1,0 +1,7 @@
+Differences between Vue and Vanilla JS
+
+For vanilla JavaScript if you want to see what values JS is holding you'd need to type out a lot of console.logs().
+Vue automatically shows you what variables and values are being held using dev tools. In Vue There's a lot less typing when it comes to defining input data or paragraphs or unordered lists etc. as opposed to in vanilla JS where you need to define an id using query selector.
+In vanilla JS event listeners need to be added to make code run the way it needs to whereas in Vue, functions and using v directives make things a lot more reactive.  
+
+Although I like how easy it is to read and understand vanilla JavaScript code I think I would prefer Vue. I like how easy Vue can imbed functions and variables straight to html using v-on or v-models. Feels like typing code in Vue is a lot more simpler and straight forward as opposed to vanilla JS where you need to create event listeners or use query selectors with element Id's or classes. I also like not having to type console.log() to be able to read output. In dev tools, Vue automatically tells you what a variable is holding, or how many indexes are in an array. 
